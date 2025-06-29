@@ -29,7 +29,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(
-                                "api/v1/auth/login/**",
+                                "/api/v1/auth/register",
+                                "/api/v1/auth/login",
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",
                                 "/swagger-resources",
@@ -37,9 +38,9 @@ public class SecurityConfig {
                                 "/configuration/security",
                                 "/swagger-ui/**",
                                 "/webjars/**",
-                                "/api/v1/warehouse/**",
                                 "/swagger-ui.html",
-                                "/"
+                                "/",
+                                "/{slug}"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -47,7 +48,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, authException) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"))
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore (jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -3,6 +3,8 @@ package com.srinjaydg.endrlink.Services;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -28,36 +30,26 @@ public class JWTService {
     /**
      * Generates an access token for the given phone number and role.
      *
-     * @param user_id the phone number of the user
-     * @param role the role of the user
+     * @param extraClaims claims to include
+     * @param userDetails details of the user
      * @return the generated access token
      */
 
-    public String generateAccessToken(String user_id, String role) {
-        Map<String, Object> claims = Map.of(
-                "user_id", user_id,
-                "role", role
-        );
+    public String generateAccessToken(
+            Map<String, Object> extraClaims,
+            UserDetails userDetails
+    ) {
+        var authorities = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
 
         return Jwts.builder()
-                .claims(claims)
+                .claims(extraClaims)
+                .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(getSigningKey(), Jwts.SIG.HS256)
-                .compact();
-    }
-
-    public String generateAdminAccessToken(String user_id, String name, String role) {
-        Map<String, Object> claims = Map.of(
-                "user_id", user_id,
-                "name", name,
-                "role", role
-        );
-
-        return Jwts.builder()
-                .claims(claims)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .claim ("authorities", authorities)
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
@@ -65,21 +57,26 @@ public class JWTService {
     /**
      * Generates a refresh token for the given phone number and role.
      *
-     * @param user_id the phone number of the user
-     * @param role the role of the user
+     * @param extraClaims claims to include
+     * @param userDetails details of the user
      * @return the generated refresh token
      */
 
-    public String generateRefreshToken(String user_id, String role) {
-        Map<String, Object> claims = Map.of(
-                "user_id", user_id,
-                "role", role
-        );
+    public String generateRefreshToken(
+            Map<String, Object> extraClaims,
+            UserDetails userDetails
+    ) {
+        var authorities = userDetails.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
 
         return Jwts.builder()
-                .claims(claims)
+                .claims(extraClaims)
+                .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtRefreshExpiration))
+                .claim ("authorities", authorities)
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();
     }
@@ -88,12 +85,12 @@ public class JWTService {
      * Validates the given access token.
      *
      * @param token the access token to validate
-     * @param user_id the phone number of the user
+     * @param user_email the phone number of the user
      * @return true if the access token is valid, false otherwise
      */
 
-    public boolean isAccessTokenValid(String token, String user_id) {
-        return extractClaim(token, "user_id", String.class).equals(user_id)
+    public boolean isAccessTokenValid(String token, String user_email) {
+        return extractClaim(token, "user_email", String.class).equals(user_email)
                 && !isAccessTokenExpired(token);
     }
 
@@ -112,12 +109,12 @@ public class JWTService {
      * Validates the given refresh token.
      *
      * @param token the refresh token to validate
-     * @param user_id id of the user to fetch the phone number
+     * @param user_email id of the user to fetch the phone number
      * @return true if the refresh token is valid, false otherwise
      */
 
-    public boolean isRefreshTokenValid(String token, String user_id) {
-        return extractClaim(token, "user_id", String.class).equals(user_id)
+    public boolean isRefreshTokenValid(String token, String user_email) {
+        return extractClaim(token, "user_email", String.class).equals(user_email)
                 && !isRefreshTokenExpired(token);
     }
 
