@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +55,7 @@ public class UrlService {
 
     public ShortUrlResponse getUrlFromSlug(String slug) {
         ShortUrls shortUrls = shortUrlsRepository.findBySlug (slug).orElseThrow (
-                () -> new IllegalArgumentException("No URL found for the provided slug: " + slug)
+                () -> new NoSuchElementException("No URL found for the provided slug: " + slug)
         );
         return shortUrlMapper.toShortUrlResponse(shortUrls);
     }
