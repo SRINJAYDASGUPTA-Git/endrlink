@@ -2,16 +2,17 @@
 import { useEffect, useState } from 'react'
 import URLForm from '@/components/URLForm'
 import URLDisplay from '@/components/URLDisplay'
+import axios from "@/utils/axiosInstance";
 
 type User = {
   id: string;
   email: string;
   name: string;
-  password: string;
-  urls: [
+  roles: string[];
+  shortUrls: [
     {
       id: string;
-      original: string;
+      originalUrl: string;
       slug: string;
       createdAt: string;
       clicks: number;
@@ -19,22 +20,24 @@ type User = {
     }
   ]
 }
+
 export default function Home() {
   const [slug, setSlug] = useState<string | null>(null)
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      localStorage.setItem('token', process.env.NEXT_PUBLIC_TEMP_USER_TOKEN!);
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      localStorage.setItem('accessToken', process.env.NEXT_PUBLIC_TEMP_USER_TOKEN!);
     }
-    fetch('/api/me', {
+
+    axios.get('/api/v1/auth/me', {
       headers: {
-        'Authorization': `Bearer ${token || process.env.NEXT_PUBLIC_TEMP_USER_TOKEN!}`
+        'Authorization': `Bearer ${accessToken || process.env.NEXT_PUBLIC_TEMP_USER_TOKEN!}`
       }
     })
-      .then(response => response.json())
+      .then(response => response.data)
       .then(data => setUser(data))
       .catch(error => console.error('Error fetching user:', error))
       .finally(() => setLoading(false));

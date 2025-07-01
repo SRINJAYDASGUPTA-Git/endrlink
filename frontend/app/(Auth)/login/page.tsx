@@ -3,6 +3,7 @@
 import { Eye, EyeClosed } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import axios from "@/utils/axiosInstance";
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
@@ -24,19 +25,20 @@ export default function LoginForm() {
 
 
     try {
-      const res = await fetch('/api/login', {
+      const res = await axios.post('/api/v1/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
+      const data = await res.data();
       console.log('Server response:', data);
 
-        if (res.ok) {
-            localStorage.setItem('token', data.token);
-            router.push('/'); // Redirect to home page after successful login
-        } else {
+      if(res.status === 200) {
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
+        router.push('/');
+      } else {
             console.error('Login failed:', data.message);
             alert(data.message || 'Login failed. Please try again.');
         }

@@ -3,6 +3,7 @@
 import { Eye, EyeClosed } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import axios from "@/utils/axiosInstance";
 
 export default function RegisterForm() {
   const [email, setEmail] = useState('');
@@ -26,17 +27,18 @@ export default function RegisterForm() {
     };
 
     try {
-      const res = await fetch('/api/register', {
+      const res = await axios.post('/api/v1/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
+      const data = await res.data();
 
       console.log('Server response:', data);
-      if(res.ok) {
-        localStorage.setItem('token', data.token);
+      if(res.status === 200) {
+        localStorage.setItem('accessToken', data.accessToken);
+        localStorage.setItem('refreshToken', data.refreshToken);
         router.push('/'); 
       }
       else {
