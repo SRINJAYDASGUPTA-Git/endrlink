@@ -1,7 +1,7 @@
 package com.srinjaydg.endrlink;
 
-import com.srinjaydg.endrlink.Models.Role;
-import com.srinjaydg.endrlink.Repositories.RoleRepository;
+import com.srinjaydg.endrlink.user.models.Role;
+import com.srinjaydg.endrlink.user.repositories.RoleRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
