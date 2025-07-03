@@ -25,18 +25,18 @@ export default function LoginForm() {
 
 
     try {
-      const res = await axios.post('/api/v1/login', {
+      const res = await axios.post('/api/v1/auth/login', {
+        ...payload,
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
       });
 
-      const data = await res.data();
+      const data = await res.data;
       console.log('Server response:', data);
 
       if(res.status === 200) {
-        localStorage.setItem('accessToken', data.accessToken);
-        localStorage.setItem('refreshToken', data.refreshToken);
+        localStorage.setItem('accessToken', data.access_token);
+        localStorage.setItem('refreshToken', data.refresh_token);
         router.push('/');
       } else {
             console.error('Login failed:', data.message);
@@ -51,15 +51,15 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto mt-10 p-6 bg-gray-100 shadow-md rounded-lg space-y-4 text-black"
+      className="max-w-md mx-auto mt-10 p-6 bg-gray-100 shadow-md rounded-lg space-y-4 text-black relative"
     >
       <h2 className="text-2xl font-bold text-center">Login</h2>
 
-      <div>
+      <div className={'relative'}>
         <label className="block text-sm font-medium text-gray-700">Email</label>
         <input
           type="email"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 p-1 px-2"
+          className="relative mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 p-1 px-2"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

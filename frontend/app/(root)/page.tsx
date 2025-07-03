@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react'
 import URLForm from '@/components/URLForm'
 import URLDisplay from '@/components/URLDisplay'
 import axios from "@/utils/axiosInstance";
-
+import {ShootingStars} from "@/components/ui/shooting-stars";
+import {StarsBackground} from "@/components/ui/stars-background";
 type User = {
   id: string;
   email: string;
@@ -60,7 +61,9 @@ export default function Home() {
   }
 
   return (
-    <main className="flex h-[90vh] w-full flex-col items-center justify-center p-6">
+    <main className="flex h-[90vh] w-full flex-col items-center justify-center p-6 z-20">
+      <ShootingStars />
+      <StarsBackground />
       <h1 className="text-3xl font-bold mb-4">Magic URL Shortener</h1>
       <URLForm onShorten={setSlug} />
       {slug && <URLDisplay shortUrl={slug} />}

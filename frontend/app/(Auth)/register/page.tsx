@@ -18,22 +18,26 @@ export default function RegisterForm() {
   const router = useRouter();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log({
+        email,
+        name,
+        password,
+        confirmPassword
+    })
     const payload = {
       email,
-      name,
       password,
-      confirmPassword,
+      name,
     };
 
     try {
-      const res = await axios.post('/api/v1/register', {
+      const res = await axios.post('/api/v1/auth/register', {
+        ...payload,
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json', },
       });
 
-      const data = await res.data();
+      const data = await res.data;
 
       console.log('Server response:', data);
       if(res.status === 200) {
@@ -50,10 +54,10 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-10 p-6 bg-gray-100 shadow-xl rounded-lg space-y-4 text-black">
+    <form onSubmit={handleSubmit} className="relative max-w-md mx-auto mt-10 p-6 bg-gray-100 shadow-xl rounded-lg space-y-4 text-black">
       <h2 className="text-2xl font-bold text-center">Register</h2>
 
-      <div>
+      <div className={'relative'}>
         <label className="block text-sm font-medium text-gray-700">Name</label>
         <input
           type="text"

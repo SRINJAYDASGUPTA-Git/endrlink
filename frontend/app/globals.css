@@ -134,3 +134,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+@theme{
+  --animate-pulse-glow: pulse-glow 4s ease-in-out infinite;
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 0.2;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+}

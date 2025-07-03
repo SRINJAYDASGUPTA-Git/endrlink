@@ -1,10 +1,17 @@
 import "./globals.css";
+import {Geist_Mono, Geist} from "next/font/google";
 
 export const metadata = {
-  title: 'Shrinkr',
-  description: 'Shrink your links with ease — powered by Next.js',
+  title: 'EndrLink',
+  description: 'A simple URL shortener',
 };
+const geist_sans = Geist({
+    variable: '--font-geist-sans',
+});
 
+const geist_mono = Geist_Mono({
+    variable: '--font-geist-mono',
+});
 export default function RootLayout({
   children,
 }: {
@@ -18,7 +25,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Shrinkr" />
         <title>Shrinkr</title>
       </head>
-      <body className="w-full">
+      <body className={`w-full bg-gray-800 text-white antialiased ${geist_sans.variable} ${geist_mono.variable}`}>
         {children}
       </body>
     </html>

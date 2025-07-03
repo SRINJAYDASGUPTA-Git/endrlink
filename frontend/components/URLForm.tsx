@@ -1,5 +1,6 @@
 'use client'
 import React, {  useState } from 'react'
+import axios from "@/utils/axiosInstance";
 
 export default function URLForm({ onShorten }: { onShorten: (slug: string) => void }) {
   const [url, setUrl] = useState('')
@@ -28,15 +29,12 @@ export default function URLForm({ onShorten }: { onShorten: (slug: string) => vo
       return
     }
 
-    const res = await fetch('/api/shorten', {
-
-      method: 'POST',
-      body: JSON.stringify({ original: trimmedUrl }),
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` },
+    const res = await axios.post('/api/v1/url/shorten', {
+      url: trimmedUrl
     })
 
-    if (res.ok) {
-      const data = await res.json()
+    if (res.status === 200) {
+      const data = await res.data
       onShorten(data.slug)
       setUrl('')
       setError('')
@@ -59,7 +57,7 @@ export default function URLForm({ onShorten }: { onShorten: (slug: string) => vo
 
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-2">
+    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-2 relative">
       <input
         type="url"
         value={url}
@@ -79,7 +77,7 @@ export default function URLForm({ onShorten }: { onShorten: (slug: string) => vo
       ) : (
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+          className="w-full bg-purple-400 text-white py-2 px-4 rounded-md hover:bg-purple-600 transition cursor-pointer"
         >
           ✨ Shorten
         </button>
