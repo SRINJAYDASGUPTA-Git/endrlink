@@ -1,5 +1,6 @@
 import {ShootingStars} from "@/components/ui/shooting-stars";
 import {StarsBackground} from "@/components/ui/stars-background";
+import {Toaster} from "sonner";
 
 export default function RootLayout({
   children,
@@ -11,6 +12,7 @@ export default function RootLayout({
       {children}
         <ShootingStars className={'z-[-100]'}/>
         <StarsBackground className={'z-[-100]'} />
+        <Toaster />
       </div>
     );
 }

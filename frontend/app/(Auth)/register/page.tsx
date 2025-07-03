@@ -40,10 +40,8 @@ export default function RegisterForm() {
       const data = await res.data;
 
       console.log('Server response:', data);
-      if(res.status === 200) {
-        localStorage.setItem('accessToken', data.accessToken);
-        localStorage.setItem('refreshToken', data.refreshToken);
-        router.push('/'); 
+      if(res.status === 201) {
+        router.push('/activate');
       }
       else {
         console.error('Registration failed:', data.message);
@@ -54,7 +52,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative max-w-md mx-auto mt-10 p-6 bg-gray-100 shadow-xl rounded-lg space-y-4 text-black">
+    <form onSubmit={handleSubmit} className="relative w-md mx-auto mt-10 p-6 bg-gray-100 shadow-xl rounded-lg space-y-4 text-black">
       <h2 className="text-2xl font-bold text-center">Register</h2>
 
       <div className={'relative'}>
@@ -104,7 +102,7 @@ export default function RegisterForm() {
         <div className="relative">
           <input
             type={showConfirmPassword ? 'text' : 'password'}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="p-1 px-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required

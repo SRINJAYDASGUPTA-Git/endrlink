@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import {Toaster} from "sonner";
 
 export default function HomeLayout({
   children,
@@ -9,6 +10,7 @@ export default function HomeLayout({
     <div className="w-full">
       <Navbar />
       {children}
+      <Toaster />
     </div>
   );
 }
