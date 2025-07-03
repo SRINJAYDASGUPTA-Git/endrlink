@@ -2,8 +2,10 @@ package com.srinjaydg.endrlink.auth;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -29,13 +31,48 @@ public class AuthenticationController {
     @PostMapping("/register")
     @Operation(
             summary = "User Registration",
-            description = "Allows a new user to register with their name, email, and password. Returns an authentication token upon successful registration."
-
+            description = "Allows a new user to register with their name, email, and password. Returns an authentication token upon successful registration.",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "201",
+                            description = "User registered successfully"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request - Invalid input data"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "409",
+                            description = "Conflict - Email already exists"
+                    )
+            }
     )
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<Void> register(
             @RequestBody AuthenticationRequest request
-    ) throws BadRequestException {
-        return ResponseEntity.ok (authenticationService.register(request));
+    ) throws BadRequestException, MessagingException {
+        authenticationService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/activate")
+    @Operation(
+            summary = "Activate User Account",
+            description = "Activates a user account using the provided activation code. This is typically used after registration.",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "User account activated successfully"
+                    ),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request - Invalid activation token"
+                    )
+            }
+    )
+    public ResponseEntity<AuthenticationResponse> activateUser(
+            @RequestParam(name = "token") String token
+    ) throws MessagingException {
+        return ResponseEntity.ok(authenticationService.activateAccount (token));
     }
 
     @GetMapping("/me")

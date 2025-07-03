@@ -25,11 +25,14 @@ public class Users implements UserDetails, Principal {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
     private String name;
     @Column(unique = true)
     private String email;
     private String password;
+
+    private Boolean accountLocked;
+    private Boolean enabled;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;
 
@@ -57,4 +60,10 @@ public class Users implements UserDetails, Principal {
     public String getName() {
         return name;
     }
+
+    @Override
+    public boolean isAccountNonLocked() { return !accountLocked; }
+
+    @Override
+    public boolean isEnabled() { return enabled; }
 }

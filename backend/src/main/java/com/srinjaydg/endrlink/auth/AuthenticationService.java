@@ -1,22 +1,30 @@
 package com.srinjaydg.endrlink.auth;
 
+import com.srinjaydg.endrlink.email.EmailService;
+import com.srinjaydg.endrlink.email.EmailTemplatename;
 import com.srinjaydg.endrlink.exceptions.ExistingEmailConflictException;
 import com.srinjaydg.endrlink.security.JWTService;
 import com.srinjaydg.endrlink.user.mappers.UserMapper;
+import com.srinjaydg.endrlink.user.models.Token;
 import com.srinjaydg.endrlink.user.models.Users;
 import com.srinjaydg.endrlink.user.repositories.RoleRepository;
+import com.srinjaydg.endrlink.user.repositories.TokenRepository;
 import com.srinjaydg.endrlink.user.repositories.UserRepository;
 import com.srinjaydg.endrlink.user.dto.UserResponse;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -31,6 +39,11 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final TokenRepository tokenRepository;
+    private final EmailService emailService;
+
+    @Value ("${application.mailing.frontend.activation-url}")
+    private String activationUrl;
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
     private static final int PASSWORD_LENGTH = 16;
@@ -41,7 +54,7 @@ public class AuthenticationService {
         return getAuthenticationResponse(authenticationRequest);
     }
 
-    public AuthenticationResponse register(AuthenticationRequest authenticationRequest) throws BadRequestException {
+    public void register(AuthenticationRequest authenticationRequest) throws BadRequestException, MessagingException {
         var userRole = roleRepository.findByName("USER")
                 .orElseThrow (() -> new IllegalStateException ("ROLE USER was not initialized"));
 
@@ -55,11 +68,67 @@ public class AuthenticationService {
                 .name(authenticationRequest.name())
                 .email(authenticationRequest.email())
                 .password(passwordEncoder.encode (authenticationRequest.password()))
+                .accountLocked (false)
+                .enabled (false)
                 .roles (List.of (userRole))
                 .build();
 
         userRepository.save(user);
-        return getAuthenticationResponse(authenticationRequest);
+        sendActivationEmail(user);
+    }
+
+    private void sendActivationEmail(Users user) throws MessagingException {
+        var newToken = generateAndSaveActivationToken (user);
+        emailService.sendEmail (
+                user.getEmail(),
+                user.getName(),
+                EmailTemplatename.ACTIVATE_ACCOUNT,
+                activationUrl,
+                newToken,
+                "Activate your account"
+        );
+    }
+
+    private String generateAndSaveActivationToken(Users user) {
+        String generatedToken = generateActivationCode();
+
+        var token = Token.builder ()
+                .token (generatedToken)
+                .createdAt (LocalDateTime.now ())
+                .expiresAt (LocalDateTime.now ().plusMinutes (15))
+                .user (user)
+                .build ();
+        tokenRepository.save (token);
+        return generatedToken;
+    }
+
+    private String generateActivationCode() {
+        String characters = "0123456789";
+        StringBuilder codeBuilder = new StringBuilder();
+        SecureRandom secureRandom = new SecureRandom ();
+        for (int i = 0; i < 6; i++) {
+            int randomIndex = secureRandom.nextInt (characters.length ());
+            codeBuilder.append (characters.charAt (randomIndex));
+        }
+        return codeBuilder.toString ();
+    }
+
+    public AuthenticationResponse activateAccount(String token) throws MessagingException {
+        Token savedToken = tokenRepository.findByToken (token)
+                .orElseThrow (() -> new NoSuchElementException ("Token not found"));
+
+        if(LocalDateTime.now ().isAfter (savedToken.getExpiresAt ())){
+            sendActivationEmail (savedToken.getUser ());
+            throw new RuntimeException ("Token expired. New token sent to email");
+        }
+
+        var user = userRepository.findById (savedToken.getUser ().getId ())
+                .orElseThrow (() -> new NoSuchElementException ("User not found"));
+        user.setEnabled (true);
+        userRepository.save (user);
+        savedToken.setValidatedAt (LocalDateTime.now ());
+        tokenRepository.save (savedToken);
+        return buildJwtResponse(user);
     }
 
     private AuthenticationResponse getAuthenticationResponse(AuthenticationRequest authenticationRequest) {
