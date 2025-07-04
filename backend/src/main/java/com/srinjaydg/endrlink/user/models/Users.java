@@ -29,6 +29,7 @@ public class Users implements UserDetails, Principal {
     @Column(unique = true)
     private String email;
     private String password;
+    private String imageUrl;
 
     private Boolean accountLocked;
     private Boolean enabled;

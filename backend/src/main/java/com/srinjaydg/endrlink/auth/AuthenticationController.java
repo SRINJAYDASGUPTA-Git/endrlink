@@ -91,8 +91,12 @@ public class AuthenticationController {
     )
     public ResponseEntity<AuthenticationResponse> oauth2Login(
             @RequestBody AuthenticationRequest request
-    ) {
-        return ResponseEntity.ok(authenticationService.oauth2Login(request));
+    ) throws MessagingException {
+        AuthenticationResponse response = authenticationService.oauth2Login(request);
+        if(response == null){
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/refresh")

@@ -17,6 +17,9 @@ public class UserResponse {
     private UUID id;
     private String name;
     private String email;
+    private String imageUrl;
+    private Boolean accountLocked;
+    private Boolean enabled;
     private List<String> roles;
     private List<ShortUrlResponse> shortUrls;
 }

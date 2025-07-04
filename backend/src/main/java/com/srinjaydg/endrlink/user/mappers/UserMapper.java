@@ -19,6 +19,9 @@ public class UserMapper {
                  .id(user.getId())
                  .name(user.getName())
                  .email(user.getEmail())
+                .imageUrl(user.getImageUrl())
+                .accountLocked(user.getAccountLocked())
+                .enabled(user.getEnabled())
                  .roles(user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                  .shortUrls(user.getShortUrls().stream().map(shortUrlMapper::toShortUrlResponse).collect(Collectors.toList()))
                  .build();

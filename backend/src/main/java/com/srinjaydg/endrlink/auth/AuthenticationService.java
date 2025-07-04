@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +67,7 @@ public class AuthenticationService {
                 .name(authenticationRequest.name())
                 .email(authenticationRequest.email())
                 .password(passwordEncoder.encode (authenticationRequest.password()))
+                .imageUrl (authenticationRequest.image () == null ? "https://avatar.vercel.sh/"+authenticationRequest.name ()+"?rounded=60" : authenticationRequest.image ())
                 .accountLocked (false)
                 .enabled (false)
                 .roles (List.of (userRole))
@@ -150,14 +150,19 @@ public class AuthenticationService {
         return userMapper.toUserResponse(user);
     }
 
-    public AuthenticationResponse oauth2Login(AuthenticationRequest request) {
+    public AuthenticationResponse oauth2Login(AuthenticationRequest request) throws MessagingException {
         Users user = userRepository.findByEmail(request.email())
                 .orElse(null);
         if (user != null) {
             return buildJwtResponse(user);
         }
         // If user does not exist, register them
-            AuthenticationRequest requestWithPassword = new AuthenticationRequest(request.email(), generateSecurePassword(), request.name());
+            AuthenticationRequest requestWithPassword = AuthenticationRequest.builder ()
+                    .email(request.email())
+                    .name(request.name())
+                    .image (request.image ())
+                    .password(generateSecurePassword())
+                    .build ();
             Users newUser = Users.builder()
                     .name(requestWithPassword.name())
                     .email(requestWithPassword.email())
@@ -166,8 +171,8 @@ public class AuthenticationService {
                             .orElseThrow(() -> new IllegalStateException("ROLE USER was not initialized"))))
                     .build();
             userRepository.save(newUser);
-            return buildJwtResponse(newUser);
-
+            sendActivationEmail(newUser);
+            return null;
     }
 
     private static String generateSecurePassword() {
