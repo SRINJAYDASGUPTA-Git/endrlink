@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.srinjaydg'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
 	toolchain {
@@ -39,9 +39,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.mockito:mockito-core:5.14.2'
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
-	testImplementation 'org.junit.platform:junit-platform-launcher:1.11.3'
+//	testImplementation 'org.mockito:mockito-core:5.14.2'
+//	testImplementation 'org.junit.jupiter:junit-jupiter:5.11.3'
+//	testImplementation 'org.junit.platform:junit-platform-launcher:1.11.3'
 	testImplementation 'com.h2database:h2'
 }
 
