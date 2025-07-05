@@ -49,7 +49,7 @@ const OAuthSignInButton = ({ session, provider }: { session: any, provider:strin
                     />
                 ):(
                     <Image
-                        src="/github_button_dark.svg"
+                        src="/github_dark_button.svg"
                         alt="GitHub Sign-In"
                         width={200}
                         height={50}

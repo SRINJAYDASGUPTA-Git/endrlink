@@ -62,8 +62,6 @@ export default function Home() {
 
   return (
     <main className="flex h-[90vh] w-full flex-col items-center justify-center p-6 z-20">
-      <ShootingStars />
-      <StarsBackground />
       <h1 className="text-3xl font-bold mb-4">Magic URL Shortener</h1>
       <URLForm onShorten={setSlug} />
       {slug && <URLDisplay shortUrl={slug} />}
