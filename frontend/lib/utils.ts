@@ -1,6 +1,5 @@
 import {type ClassValue, clsx} from "clsx"
 import {twMerge} from "tailwind-merge"
-import {auth} from "@/utils/auth";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -17,8 +16,4 @@ export async function uploadToImgbb(file: File): Promise<string> {
 
   const data = await res.json();
   return data.data.url; // this is the hosted image URL
-}
-
-export const getSession = async () => {
-  return await auth();
 }

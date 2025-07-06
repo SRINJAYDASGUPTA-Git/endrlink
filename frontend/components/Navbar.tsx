@@ -68,8 +68,8 @@ export default function Navbar() {
                         className="w-full h-[60%]"
                         particleColor="#FFFFFF"
                     />
-                    <div
-                        className="absolute inset-0 bg-gray-800/60 [mask-image:radial-gradient(400px_200px_at_top,transparent_30%,white)]"/>
+                    {/*<div*/}
+                    {/*    className="absolute inset-0 bg-gray-800/60 [mask-image:radial-gradient(400px_200px_at_top,transparent_30%,white)]"/>*/}
                 </div>
             </div>
 

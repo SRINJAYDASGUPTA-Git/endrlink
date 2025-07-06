@@ -1,6 +1,7 @@
 import "./globals.css";
 import {Geist_Mono, Geist} from "next/font/google";
 import {UserProvider} from "@/providers/UserContext";
+import {Toaster} from "sonner";
 
 export const metadata = {
   title: 'EndrLink',
@@ -29,6 +30,7 @@ export default function RootLayout({
       <body className={`w-full bg-gray-800 text-white antialiased ${geist_sans.variable} ${geist_mono.variable}`}>
           <UserProvider>
             {children}
+          <Toaster position={'top-center'}/>
           </UserProvider>
       </body>
     </html>

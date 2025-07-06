@@ -1,11 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/providers/UserContext';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, Settings, LinkIcon } from 'lucide-react';
+import {useRouter} from 'next/navigation';
+import {useUser} from '@/providers/UserContext';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import {Button} from '@/components/ui/button';
+import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
+import {LinkIcon, LogOut, Settings} from 'lucide-react';
 
 export const UserButton = () => {
     const { user, setUser } = useUser();
@@ -16,6 +23,7 @@ export const UserButton = () => {
     const handleLogout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+
         setUser(null);
         router.push('/login');
     };
@@ -53,7 +61,14 @@ export const UserButton = () => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600">
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2 h-4 w-4" onClick={async () => {
+                        const res = await fetch('/api/auth/logout', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        }).then(res => res.json());
+                    }}/>
                     <span>Logout</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
