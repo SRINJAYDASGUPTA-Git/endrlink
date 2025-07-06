@@ -1,5 +1,6 @@
 import "./globals.css";
 import {Geist_Mono, Geist} from "next/font/google";
+import {UserProvider} from "@/providers/UserContext";
 
 export const metadata = {
   title: 'EndrLink',
@@ -22,11 +23,13 @@ export default function RootLayout({
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="apple-mobile-web-app-title" content="Shrinkr" />
+        <meta name="apple-mobile-web-app-title" content="EndrLink" />
         <title>Shrinkr</title>
       </head>
       <body className={`w-full bg-gray-800 text-white antialiased ${geist_sans.variable} ${geist_mono.variable}`}>
-        {children}
+          <UserProvider>
+            {children}
+          </UserProvider>
       </body>
     </html>
   );

@@ -1,4 +1,3 @@
-// components/OAuthSignInButton.tsx
 'use client';
 
 import { useEffect } from 'react';
@@ -7,7 +6,9 @@ import { toast } from 'sonner';
 import { signIn } from "next-auth/react"
 import { Button } from './ui/button';
 import Image from "next/image";
+import {useRouter} from "next/navigation";
 const OAuthSignInButton = ({ session, provider }: { session: any, provider:string }) => {
+    const router = useRouter();
     useEffect(() => {
         const authenticate = async () => {
             if (!session?.user) return;
@@ -18,11 +19,14 @@ const OAuthSignInButton = ({ session, provider }: { session: any, provider:strin
                 });
 
                 console.log('Server response:', response.data);
-                // if (response.status === 201) {
-                //     window.location.href = '/activate';
-                // } else if (response.status === 200) {
-                //     window.location.href = '/';
-                // }
+                if (response.status === 201) {
+                    router.push('/activate');
+                } else if (response.status === 200) {
+                    toast.success('Authentication successful!');
+                    localStorage.setItem('accessToken', response.data.access_token);
+                    localStorage.setItem('refreshToken', response.data.refresh_token);
+                    router.push('/');
+                }
             } catch (err) {
                 console.error('Error during authentication:', err);
                 toast.error('Authentication failed. Please try again.');
@@ -36,7 +40,7 @@ const OAuthSignInButton = ({ session, provider }: { session: any, provider:strin
         <Button
             type="button"
             onClick={() => signIn(provider)}
-            className="p-0 bg-transparent rounded-full overflow-hidden w-[200px] h-[50px] cursor-pointer hover:shadow-purple-500 shadow-md transition-all duration-300"
+            className="p-0 bg-transparent rounded-full overflow-hidden w-[200px] h-[50px] cursor-pointer transition-all duration-300"
         >
             {
                 provider === 'google' ? (

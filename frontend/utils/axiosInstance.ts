@@ -27,6 +27,9 @@ axiosInstance.interceptors.request.use(async (config) => {
     const refreshToken = localStorage.getItem("refreshToken");
 
     // Refresh token if access token is expired
+    if(!accessToken){
+        localStorage.setItem("accessToken", process.env.NEXT_PUBLIC_TEMP_USER_TOKEN!);
+    }
     if (isExpired(accessToken) && refreshToken && !isExpired(refreshToken)) {
         try {
             const res = await axios.get("/api/v1/auth/refresh", {

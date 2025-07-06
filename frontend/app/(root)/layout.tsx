@@ -9,7 +9,7 @@ export default function HomeLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="w-full">
+    <div className="w-full flex items-center justify-center h-screen p-6">
       <Navbar />
       {children}
         <ShootingStars className={'z-[-100]'}/>

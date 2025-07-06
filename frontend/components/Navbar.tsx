@@ -2,9 +2,15 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { SparklesCore } from './ui/sparkles'; // Adjust import if needed
+import {SparklesCore} from './ui/sparkles';
+import {useUser} from "@/providers/UserContext";
+import {UserButton} from "@/components/UserButton"; // Adjust import if needed
 
 export default function Navbar() {
+    const {user, loading} = useUser();
+    if (loading) {
+        return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    }
     return (
         <>
             {/* Full-width wrapper with sticky navbar */}
@@ -12,7 +18,7 @@ export default function Navbar() {
                 {/* 🟣 Glow behind navbar */}
                 <div
                     className="absolute top-0 left-0 w-full bg-purple-500 blur-[160px] opacity-30 pointer-events-none"
-                    style={{ animation: 'var(--animate-pulse-glow)' }}
+                    style={{animation: 'var(--animate-pulse-glow)'}}
                 />
 
                 {/* 🔳 Navbar content */}
@@ -24,24 +30,32 @@ export default function Navbar() {
                 >
                     {/* Logo */}
                     <Link href="/">
-                        <Image src="/logo.svg" alt="Logo" width={100} height={100} />
+                        <Image src="/logo.svg" alt="Logo" width={100} height={100}/>
                     </Link>
 
                     {/* Buttons */}
-                    <div className="space-x-4">
-                        <Link
-                            href="/login"
-                            className="px-4 py-2 border border-purple-400 text-purple-300 rounded-xl hover:bg-purple-600 hover:text-white transition"
-                        >
-                            Login
-                        </Link>
-                        <Link
-                            href="/register"
-                            className="px-4 py-2 bg-purple-500 text-white rounded-xl hover:bg-purple-600 transition"
-                        >
-                            Signup
-                        </Link>
-                    </div>
+                    {
+                        user && user.name !== 'Temporary User' ? (
+                            <UserButton/>
+                        ) : (
+                            <div className="space-x-4">
+
+                                <Link
+                                    href="/login"
+                                    className="px-4 py-2 border border-purple-400 text-purple-300 rounded-xl hover:bg-purple-600 hover:text-white transition"
+                                >
+                                    Login
+                                </Link>
+                                <Link
+                                    href="/register"
+                                    className="px-4 py-2 bg-purple-500 text-white rounded-xl hover:bg-purple-600 transition"
+                                >
+                                    Signup
+                                </Link>
+                            </div>
+                        )
+                    }
+
                 </nav>
 
                 {/* ✨ Sparkles under navbar */}
@@ -54,7 +68,8 @@ export default function Navbar() {
                         className="w-full h-[60%]"
                         particleColor="#FFFFFF"
                     />
-                    <div className="absolute inset-0 bg-gray-800/60 [mask-image:radial-gradient(400px_200px_at_top,transparent_30%,white)]" />
+                    <div
+                        className="absolute inset-0 bg-gray-800/60 [mask-image:radial-gradient(400px_200px_at_top,transparent_30%,white)]"/>
                 </div>
             </div>
 
