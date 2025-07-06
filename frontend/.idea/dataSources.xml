@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="endrlink-db@ep-shiny-credit-a8t82hnm-pooler.eastus2.azure.neon.tech" uuid="ad6d34f8-626a-4cb8-b4ef-68abc855fa78">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ep-shiny-credit-a8t82hnm-pooler.eastus2.azure.neon.tech/endrlink-db?sslmode=require&amp;channelBinding=require</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="neondb@ep-damp-sunset-a1pyvf8x-pooler.ap-southeast-1.aws.neon.tech" uuid="c813172b-463b-4832-baaa-d978ed05e47a">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ep-damp-sunset-a1pyvf8x-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>
