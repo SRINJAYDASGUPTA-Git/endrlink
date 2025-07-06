@@ -167,6 +167,9 @@ public class AuthenticationService {
                     .name(requestWithPassword.name())
                     .email(requestWithPassword.email())
                     .password(passwordEncoder.encode(requestWithPassword.password()))
+                    .imageUrl(requestWithPassword.image())
+                    .accountLocked (false)
+                    .enabled (false)
                     .roles(List.of(roleRepository.findByName("USER")
                             .orElseThrow(() -> new IllegalStateException("ROLE USER was not initialized"))))
                     .build();
