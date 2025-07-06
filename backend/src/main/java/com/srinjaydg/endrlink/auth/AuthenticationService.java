@@ -10,7 +10,6 @@ import com.srinjaydg.endrlink.user.models.Users;
 import com.srinjaydg.endrlink.user.repositories.RoleRepository;
 import com.srinjaydg.endrlink.user.repositories.TokenRepository;
 import com.srinjaydg.endrlink.user.repositories.UserRepository;
-import com.srinjaydg.endrlink.user.dto.UserResponse;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
     private final TokenRepository tokenRepository;
     private final EmailService emailService;
 
@@ -140,14 +138,6 @@ public class AuthenticationService {
         );
         var userVar = ((Users) auth.getPrincipal ());
         return buildJwtResponse(userVar);
-    }
-
-    @Transactional
-    public UserResponse getCurrentUser(Authentication connectedUser) {
-        Users principal = (Users) connectedUser.getPrincipal();
-        Users user = userRepository.findByEmail(principal.getEmail())
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
-        return userMapper.toUserResponse(user);
     }
 
     public AuthenticationResponse oauth2Login(AuthenticationRequest request) throws MessagingException {

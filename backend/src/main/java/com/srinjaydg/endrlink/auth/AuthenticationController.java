@@ -75,14 +75,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.activateAccount (token));
     }
 
-    @GetMapping("/me")
-    @Operation(
-            summary = "Get Current User",
-            description = "Returns the details of the currently authenticated user."
-    )
-    public ResponseEntity<?> getCurrentUser(Authentication connectedUser) {
-        return ResponseEntity.ok (authenticationService.getCurrentUser (connectedUser));
-    }
+
 
     @PostMapping("/oauth2/login")
     @Operation(
