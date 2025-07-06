@@ -1,5 +1,6 @@
 package com.srinjaydg.endrlink.auth;
 
+import com.srinjaydg.endrlink.user.models.Users;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;

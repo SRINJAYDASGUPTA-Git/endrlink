@@ -75,7 +75,7 @@ public class AuthenticationService {
         sendActivationEmail(user);
     }
 
-    private void sendActivationEmail(Users user) throws MessagingException {
+    public void sendActivationEmail(Users user) throws MessagingException {
         var newToken = generateAndSaveActivationToken (user);
         emailService.sendEmail (
                 user.getEmail(),

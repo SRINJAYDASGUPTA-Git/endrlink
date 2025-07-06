@@ -1,10 +1,13 @@
 package com.srinjaydg.endrlink.user.controllers;
 
+import com.srinjaydg.endrlink.auth.AuthenticationService;
 import com.srinjaydg.endrlink.user.dto.UserResponse;
 import com.srinjaydg.endrlink.user.dto.UserUpdateRequest;
+import com.srinjaydg.endrlink.user.models.Users;
 import com.srinjaydg.endrlink.user.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @GetMapping("/me")
     @Operation(
@@ -34,5 +38,18 @@ public class UserController {
     )
     public ResponseEntity<UserResponse> updateCurrentUser(Authentication connectedUser, @RequestBody UserUpdateRequest request) {
         return ResponseEntity.ok (userService.updateCurrentUser (connectedUser, request));
+    }
+
+    @GetMapping("/send-verification-email")
+    @Operation(
+            summary = "Send Verification Email",
+            description = "Sends a verification email to the user. This is typically used to verify the user's email address after registration."
+    )
+    public ResponseEntity<Void> sendVerificationEmail(
+            Authentication connectedUser
+    ) throws MessagingException {
+        Users user = (Users) connectedUser.getPrincipal();
+        authenticationService.sendActivationEmail (user);
+        return ResponseEntity.ok().build();
     }
 }
