@@ -57,13 +57,8 @@ public class BeansConfig {
         config.setAllowCredentials (true);
 //        config.setAllowedOrigins (List.of ("*"));
         config.addAllowedOriginPattern("http://localhost:3000");
-        config.addAllowedOriginPattern("http://127.0.0.1:5500");
-        config.addAllowedOriginPattern ("http://localhost:63344");
-        config.addAllowedOriginPattern("https://www.dookanpe.com");
-        config.addAllowedOriginPattern("https://dookanpe.com");
+        config.addAllowedOriginPattern("https://endrlink.srinjaydg.in");
         config.addAllowedOriginPattern("https://*.vercel.app");
-        config.addAllowedOriginPattern("https://*.dookanpe.com");
-        config.addAllowedOriginPattern("https://*.cloudworkstations.dev");
         config.setAllowedHeaders (Arrays.asList (ORIGIN, CONTENT_TYPE, ACCEPT, AUTHORIZATION));
         config.setAllowedMethods (Arrays.asList ("GET", "POST", "PUT", "DELETE", "PATCH"));
         source.registerCorsConfiguration ("/**", config);
