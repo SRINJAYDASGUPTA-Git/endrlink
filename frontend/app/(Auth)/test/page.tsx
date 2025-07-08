@@ -1,15 +1,12 @@
-import { auth } from "@/utils/auth";
-import OAuthSignInButton from "@/components/OAuthSignInButton";
+import React from 'react';
+import Loader from "@/components/Loader";
 
-const TestAuthPage = async () => {
-    const session = await auth();
-    return(
-        <div className="flex flex-col items-center justify-center h-screen">
-            <OAuthSignInButton session={session} provider={'google'} />
-            <OAuthSignInButton session={session} provider={'github'} />
+const TestPage = () => {
+    return (
+        <div>
+            <Loader subtitle={"Test Page"} />
         </div>
-
     );
 };
 
-export default TestAuthPage;
+export default TestPage;

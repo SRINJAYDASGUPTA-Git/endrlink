@@ -5,6 +5,8 @@ import {useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
 import axios from "@/utils/axiosInstance";
 import OAuthSignInButton from "@/components/OAuthSignInButton";
+import Loader from "@/components/Loader";
+import {Session} from "@/types";
 
 export default function RegisterForm() {
     const [email, setEmail] = useState('');
@@ -14,23 +16,35 @@ export default function RegisterForm() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [session, setSession] = useState<any>(null);
+    const [session, setSession] = useState<Session|null>(null);
 
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
 
     useEffect(() => {
         const fetchSession = async () => {
-            const curr_session = await fetch('/api/auth/session');
-            if (curr_session.ok) {
-                const sessionData = await curr_session.json();
+            try {
+                const res = await fetch('/api/auth/session');
+                if (!res.ok) {
+                    setSession(null);
+                    return;
+                }
+                const sessionData = await res.json();
                 setSession(sessionData);
-            } else {
-                console.log('No session found');
+            } catch (err) {
+                console.error('Error fetching session:', err);
             }
-        };
+        }
         fetchSession();
-    }, []);
+    }, [])
+
+    useEffect(() => {
+        if (session?.user) {
+            // If user is already logged in, redirect to home
+            window.location.replace('/');
+        }
+    }, [session]);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log({
@@ -46,6 +60,7 @@ export default function RegisterForm() {
         };
 
         try {
+            setLoading(true);
             const res = await axios.post('/api/v1/auth/register', {
                 ...payload,
                 method: 'POST',
@@ -62,9 +77,13 @@ export default function RegisterForm() {
             }
         } catch (err) {
             console.error('Error during registration:', err);
+        } finally {
+            setLoading(false);
         }
     };
-
+    if (loading) {
+        return <Loader subtitle={'Registering...'} />;
+    }
     return (
         <form
             onSubmit={handleSubmit}
@@ -74,8 +93,8 @@ export default function RegisterForm() {
 
             {/* OAuth buttons */}
             <div className="flex gap-4 justify-center flex-col md:flex-row">
-                <OAuthSignInButton session={session} provider="google" />
-                <OAuthSignInButton session={session} provider="github" />
+                <OAuthSignInButton provider="google" />
+                <OAuthSignInButton provider="github" />
             </div>
 
             <div>

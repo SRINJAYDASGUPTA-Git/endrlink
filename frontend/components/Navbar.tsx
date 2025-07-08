@@ -9,7 +9,7 @@ import {UserButton} from "@/components/UserButton"; // Adjust import if needed
 export default function Navbar() {
     const {user, loading} = useUser();
     if (loading) {
-        return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+        return null;
     }
     return (
         <>
@@ -61,7 +61,7 @@ export default function Navbar() {
                 {/* ✨ Sparkles under navbar */}
                 <div className="relative w-full h-32 -mt-1 z-10">
                     <SparklesCore
-                        background="transparent"
+                        background={"transparent"}
                         minSize={0.4}
                         maxSize={2}
                         particleDensity={500}

@@ -17,3 +17,12 @@ export interface UserResponse {
     roles: string[];
     shortUrls: ShortUrlResponse[];
 }
+
+export interface Session{
+    user:{
+        name: string;
+        email: string;
+        image: string
+    };
+    expires: string;
+}

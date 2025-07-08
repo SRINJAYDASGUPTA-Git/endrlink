@@ -1,37 +1,28 @@
 'use client';
 
-import { Eye, EyeClosed } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import {Eye, EyeClosed} from 'lucide-react';
 import {useEffect, useState} from 'react';
 import axios from '@/utils/axiosInstance';
 import OAuthSignInButton from "@/components/OAuthSignInButton";
 import {useUser} from "@/providers/UserContext";
+import Loader from "@/components/Loader";
+import {Session} from "@/types";
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
+    // Use the User context to refresh user data after login
+  const [loading, setLoading] = useState(false);
   const {refreshUser} = useUser();
-  useEffect(() => {
-    const fetchSession = async () => {
-      const curr_session = await fetch('/api/auth/session');
-        if (curr_session.ok) {
-            const sessionData = await curr_session.json();
-            setSession(sessionData);
-        } else {
-            console.log('No session found');
-        }
-    };
-    fetchSession();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = { email, password };
 
     try {
+      setLoading(true);
       const res = await axios.post('/api/v1/auth/login', payload);
       const data = await res.data;
 
@@ -39,15 +30,47 @@ export default function LoginForm() {
         localStorage.setItem('accessToken', data.access_token);
         localStorage.setItem('refreshToken', data.refresh_token);
         await refreshUser(); // Refresh user context after login
-        router.push('/');
+        window.location.replace('/');
       } else {
         console.error('Login failed:', data.message);
         alert(data.message || 'Login failed. Please try again.');
       }
     } catch (err) {
       console.error('Login error:', err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchSession = async () => {
+        try {
+            const res = await fetch('/api/auth/session');
+            if (!res.ok) {
+              setSession(null);
+              return;
+            }
+            const sessionData = await res.json();
+            setSession(sessionData as Session);
+        } catch (err) {
+            console.error('Error fetching session:', err);
+        }
+    }
+    fetchSession();
+  }, [])
+
+    useEffect(() => {
+        if (session?.user) {
+        // If user is already logged in, redirect to home
+          console.log(session)
+
+          // window.location.replace('/');
+        }
+    }, [session]);
+
+    if (loading) {
+      return <Loader subtitle={'Logging in...'} />;
+    }
 
   return (
       <form
@@ -58,8 +81,8 @@ export default function LoginForm() {
 
         {/* --- OAuth Buttons --- */}
         <div className="flex gap-4 justify-center">
-          <OAuthSignInButton session={session} provider="google" />
-          <OAuthSignInButton session={session} provider="github" />
+          <OAuthSignInButton provider="google" />
+          <OAuthSignInButton provider="github" />
         </div>
 
         <div className="border-t border-white/10 pt-6 space-y-4">

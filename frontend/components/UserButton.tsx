@@ -13,6 +13,7 @@ import {
 import {Button} from '@/components/ui/button';
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {LinkIcon, LogOut, Settings} from 'lucide-react';
+import {signOut} from "next-auth/react";
 
 export const UserButton = () => {
     const { user, setUser } = useUser();
@@ -20,9 +21,11 @@ export const UserButton = () => {
 
     if (!user || user.name === 'Temporary User') return null;
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+
+        await signOut();
 
         setUser(null);
         router.push('/login');
@@ -61,14 +64,7 @@ export const UserButton = () => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600">
-                    <LogOut className="mr-2 h-4 w-4" onClick={async () => {
-                        const res = await fetch('/api/auth/logout', {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        }).then(res => res.json());
-                    }}/>
+                    <LogOut className="mr-2 h-4 w-4" />
                     <span>Logout</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>

@@ -14,6 +14,7 @@ import { uploadToImgbb } from '@/lib/utils';
 import Image from 'next/image';
 import {Image as ImageIcon, UploadCloud, X} from "lucide-react";
 import {useRouter} from "next/navigation";
+import Loader from "@/components/Loader";
 
 export default function ProfileSettingsPage() {
     const { user, refreshUser, loading:userLoading } = useUser();
@@ -24,7 +25,6 @@ export default function ProfileSettingsPage() {
         resolver: zodResolver(profileSettingsSchema),
         defaultValues: {
             name: '',
-            email: '',
             imageUrl: '',
             imageFile: undefined,
         },
@@ -45,7 +45,6 @@ export default function ProfileSettingsPage() {
 
         form.reset({
             name: user.name,
-            email: user.email || '',
             imageUrl: user.imageUrl || '',
             imageFile: undefined,
         });
@@ -62,7 +61,6 @@ export default function ProfileSettingsPage() {
 
             await axios.put('/api/v1/users/me', {
                 name: data.name,
-                email: data.email,
                 imageUrl: finalImageUrl,
             });
 
@@ -137,7 +135,16 @@ export default function ProfileSettingsPage() {
             </div>
         );
     }
-
+    if (userLoading) {
+        return <Loader subtitle={'Fetching Profile Data...'} />;
+    }
+    if (loading) {
+        return (
+            <div className="fixed top-0 left-0 w-full z-50 flex justify-center items-start pt-10 backdrop-blur bg-black/30">
+                <Loader subtitle={'Updating Profile...'} />
+            </div>
+        );
+    }
     return (
         <div className="h-[90%] flex mt-20 w-full p-10">
             {/* Sidebar */}
@@ -193,41 +200,6 @@ export default function ProfileSettingsPage() {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <div className="flex items-center gap-4">
-                                                <Input {...field} type="email" placeholder="you@example.com" />
-                                                {!user?.enabled && (
-                                                    <Button
-                                                        type="button"
-                                                        className="ml-2 bg-blue-500 hover:bg-blue-600 text-white"
-                                                        onClick={() => {
-                                                            axios.get('/api/v1/users/send-verification-email')
-                                                                .then(() => {
-                                                                    toast.success('Verification email sent');
-                                                                })
-                                                                .catch((err) => {
-                                                                    console.error(err);
-                                                                    toast.error('Failed to send verification email');
-                                                                });
-                                                            toast.info('Verification email sent');
-                                                            router.push('/activate');
-                                                        }}
-                                                    >
-                                                        Verify
-                                                    </Button>
-                                                )}
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
 
                             <FormField
                                 control={form.control}
@@ -255,7 +227,6 @@ export default function ProfileSettingsPage() {
                                     </FormItem>
                                 )}
                             />
-
                         </form>
                     </Form>
                 </div>
