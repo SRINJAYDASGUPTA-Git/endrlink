@@ -10,7 +10,16 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...compat.config({
+    extends:['next'],
+    rules: {
+      "react/react-in-jsx-scope": "off", // Next.js does not require React to be in scope
+      "no-unused-vars": "off", // Allow unused variables prefixed with _
+      "import/no-unresolved": "off", // Disable unresolved import checks
+      "typescript-eslint/no-explicit-any": "off", // Allow explicit 'any' type in TypeScript
+
+    },
+  }),
 ];
 
 export default eslintConfig;

@@ -1,14 +1,7 @@
 'use client';
 import React from 'react';
 import {useRouter} from 'next/navigation';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
 import {Copy, CopyCheck} from 'lucide-react';
 import axios from "@/utils/axiosInstance";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
@@ -40,7 +33,9 @@ const ShortURLsByUser = () => {
             try {
                 const response = await axios.get('/api/v1/url/');
                 setUrls(response.data as Url[]);
-            } catch (error: any) {
+            } 
+
+            catch (error: any) {
                 if (error.response?.status === 404) {
                     setUrls([]);
                 } else {

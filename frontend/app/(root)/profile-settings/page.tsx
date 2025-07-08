@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useUser } from '@/providers/UserContext';
-import { useForm } from 'react-hook-form';
+import {FieldValues, useForm} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileSettingsSchema, ProfileSettingsValues } from '@/lib/validators/profile';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -74,7 +74,7 @@ export default function ProfileSettingsPage() {
         }
     };
 
-    function FileUploadField({ field }: { field: any }) {
+    function FileUploadField({ field }: { field: FieldValues }) {
         const [preview, setPreview] = useState<string | null>(null);
 
         useEffect(() => {
